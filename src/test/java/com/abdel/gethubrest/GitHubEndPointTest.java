@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class GitHubEndPointTest {
 
 
-    public static final String GITHUB_ENDPOINT_URI = "https://api.github.com/search/repositories?q=created:%3E2020-01-07";
+    private static final String GITHUB_ENDPOINT_URI = "https://api.github.com/search/repositories?q=created:%3E2020-01-07";
 
     @Test     // testing that the endpoint is up
     public void gitHubEndPoint(){
@@ -43,7 +43,7 @@ public class GitHubEndPointTest {
                 equalTo(HttpStatus.SC_OK));
     }
 
-    @Test
+    @Test  // testing that we get a json mime type as response type
     public void gitHubEndPointResponseType(){
 
         //arrange
