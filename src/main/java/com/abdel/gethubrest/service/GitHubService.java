@@ -1,13 +1,16 @@
 package com.abdel.gethubrest.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
-@Service
+
+
+import com.abdel.gethubrest.domain.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+
 public interface GitHubService {
 
 
-    public JsonNode getAllRepositoriesAsJSONNODE();
+    public Optional<List<Repository>> getAllRepositories();
 }
