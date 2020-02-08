@@ -13,7 +13,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+
 
 
 
@@ -28,12 +28,28 @@ import java.util.Optional;
 @Service
 public class GitHubServiceImpl implements GitHubService {
     Logger logger = LoggerFactory.getLogger(GitHubServiceImpl.class);
-    private static final String GITHUB_ENDPOINT_URI = "https://api.github.com/search/repositories?q=created:%3E2020-01-07&sort=stars&order=desc";
+    private static final String BASE_ENDPOINT_URI = "https://api.github.com/search/repositories";
+    private static final String TRENDING_ENDPOINT_URI = "https://api.github.com/search/repositories?q=created:%3E2020-01-07&sort=stars&order=desc";
 
 
     @Override
     public Optional<List<Repository>> getAllRepositories() {
-        HttpUriRequest httpUriRequest = new HttpGet(GITHUB_ENDPOINT_URI);
+        return repositoriesHandler(TRENDING_ENDPOINT_URI);
+    }
+
+    @Override
+    public Optional<List<Repository>> getRepositoriesByLanguage(String language) {
+        Optional<List<Repository>> result = repositoriesHandler(BASE_ENDPOINT_URI);
+        if (result.isPresent()){
+            List<Repository> repositories = result.get();
+            /* To do : calculate language per repo */
+        }
+
+        return Optional.empty();
+    }
+
+    private Optional<List<Repository>> repositoriesHandler(String endpointUri){
+        HttpUriRequest httpUriRequest = new HttpGet(endpointUri);
         HttpResponse httpResponse =null;
         List<Repository> repositories=new ArrayList<>();
 

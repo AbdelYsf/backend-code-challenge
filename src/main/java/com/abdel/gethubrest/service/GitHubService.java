@@ -12,5 +12,6 @@ import java.util.Optional;
 public interface GitHubService {
 
 
-    public Optional<List<Repository>> getAllRepositories();
+     Optional<List<Repository>> getAllRepositories();
+     Optional<List<Repository>> getRepositoriesByLanguage(String language);
 }
