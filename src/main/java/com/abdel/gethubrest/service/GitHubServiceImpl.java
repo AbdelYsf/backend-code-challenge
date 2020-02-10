@@ -13,60 +13,61 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-
-
 import org.springframework.stereotype.Service;
-
-
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 public class GitHubServiceImpl implements GitHubService {
     Logger logger = LoggerFactory.getLogger(GitHubServiceImpl.class);
-    private static final String BASE_ENDPOINT_URI = "https://api.github.com/search/repositories";
+    private static final String BASE_ENDPOINT_URI = "https://api.github.com/search/repositories?q=created";
     private static final String TRENDING_ENDPOINT_URI = "https://api.github.com/search/repositories?q=created:%3E2020-01-07&sort=stars&order=desc";
 
-
     @Override
-    public Optional<List<Repository>> getAllRepositories() {
+    public Optional<List<Repository>> getTrendingRepositories() {
+        
         return repositoriesHandler(TRENDING_ENDPOINT_URI);
     }
 
     @Override
     public Optional<List<Repository>> getRepositoriesByLanguage(String language) {
-        Optional<List<Repository>> result = repositoriesHandler(BASE_ENDPOINT_URI);
-        if (result.isPresent()){
-            List<Repository> repositories = result.get();
-            /* To do : calculate language per repo */
-        }
+        language = language.toLowerCase();
+        HashMap<String,List<Repository>>  reposByLanguage=reposByLanguage();
 
+            if(!reposByLanguage.isEmpty()){
+                List<Repository> langRepos = reposByLanguage.get(language);
+                return Optional.ofNullable(langRepos);
+            }
         return Optional.empty();
     }
 
     private Optional<List<Repository>> repositoriesHandler(String endpointUri){
-        HttpUriRequest httpUriRequest = new HttpGet(endpointUri);
-        HttpResponse httpResponse =null;
-        List<Repository> repositories=new ArrayList<>();
 
+        List<Repository> repositories=new ArrayList<>();
+        HttpUriRequest httpUriRequest = new HttpGet(endpointUri);
+        HttpResponse httpResponse ;
         try {
+            // sending get request and getting the response
             httpResponse = HttpClientBuilder.create().build().execute(httpUriRequest);
             HttpEntity content = httpResponse.getEntity();
+            // reading the response body as the a string
             String responseBody = EntityUtils.toString(content);
+
             ObjectMapper mapper = new ObjectMapper();
             JsonNode node = mapper.readTree(responseBody);
+            // fetching the list of repositories
             JsonNode items = node.path("items");
             if (items.isArray()){
-                Repository repository= null;
+                Repository repository;
                 for (final JsonNode repo : items) {
                     // temp repo
                     repository= new Repository();
 
-                    // matching
+                    // matching values
 
                     repository.setId(repo.path("id").asText());
                     repository.setName(repo.path("name").asText());
@@ -81,14 +82,33 @@ public class GitHubServiceImpl implements GitHubService {
 
                     // feeding the list
                     repositories.add(repository);
-
                 }
             }
-
             return Optional.ofNullable(repositories);
         } catch (IOException e) {
             logger.error(" Exception happened! while getting all repos",e);
             return Optional.empty();
         }
+    }
+
+    // returning a hashMap that contains the name of language as key and a list of its repos as values
+    private HashMap<String,List<Repository>> reposByLanguage(){
+
+        Optional<List<Repository>> result = repositoriesHandler(BASE_ENDPOINT_URI);
+        HashMap<String, List<Repository>> reposByLanguage = new HashMap<>();
+
+        if (result.isPresent()){
+            List<Repository> repositories = result.get();
+            // calculate language per repo
+            repositories.forEach(repository ->
+            {
+                String lang = repository.getLanguage().toLowerCase();
+                if(!reposByLanguage.containsKey(lang)) {
+                    reposByLanguage.put(lang, new ArrayList<>());
+                }
+                reposByLanguage.get(lang).add(repository);
+            });
+        }
+             return reposByLanguage;
     }
 }

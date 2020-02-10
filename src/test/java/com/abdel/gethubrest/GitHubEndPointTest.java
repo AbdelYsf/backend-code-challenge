@@ -2,8 +2,7 @@ package com.abdel.gethubrest;
 
 import com.abdel.gethubrest.domain.Repository;
 import com.abdel.gethubrest.service.GitHubService;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.abdel.gethubrest.service.GitHubServiceImpl;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -13,14 +12,11 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
-
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,12 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 public class GitHubEndPointTest {
 
-
+    private static final Logger logger = LoggerFactory.getLogger(GitHubEndPointTest.class);
     private static final String GITHUB_ENDPOINT_URI = "https://api.github.com/search/repositories?q=created:%3E2020-01-07&sort=stars&order=desc";
 
     @Autowired
     GitHubService gitHubService;
-    @Test     // testing that the endpoint is up
+    @Test     // ensuring that github endpoint is up
     public void gitHubEndPoint(){
 
         //arrange
@@ -50,19 +46,20 @@ public class GitHubEndPointTest {
             httpResponse = HttpClientBuilder.create().build().execute(httpUriRequest);
             HttpEntity content = httpResponse.getEntity();
             String s = EntityUtils.toString(content);
-            System.out.println(s);
+            logger.info(s);
         } catch (IOException e) {
-            e.printStackTrace();
+
+            logger.error(" Exception happened! : in getHubEndPoint Test",e);
         }
 
 
-        // assert
+        // assert that we get an OK status
         assertThat(
                 httpResponse.getStatusLine().getStatusCode(),
                 equalTo(HttpStatus.SC_OK));
     }
 
-    @Test  // testing that we get a json mime type as response type
+    @Test  // ensuring that we get a json mime type as response type
     public void gitHubEndPointResponseType(){
 
         //arrange
@@ -73,7 +70,7 @@ public class GitHubEndPointTest {
         try {
             httpResponse = HttpClientBuilder.create().build().execute(httpUriRequest);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(" Exception happened! : in gitHubEndPointResponseType Test",e);
         }
 
         // assert
@@ -81,28 +78,22 @@ public class GitHubEndPointTest {
         assertEquals( "application/json", mimeType );
     }
 
-    @Test
+    @Test // ensuring that we get a non empty result result
     public void gitHubServiceTest(){
 
-       // failed because of a validation issue from github api
-        /*RestTemplate template = new RestTemplate();
-       ResponseEntity<String> response = template.getForEntity(GITHUB_ENDPOINT_URI , String.class);
-        System.out.println(response.getBody());*/
-
-        Optional<List<Repository>> allRepositories = gitHubService.getAllRepositories();
+        Optional<List<Repository>> allRepositories = gitHubService.getTrendingRepositories();
 
        if (allRepositories.isPresent()){
            List<Repository> repositories = allRepositories.get();
 
            for(Repository repo :repositories){
-               System.out.println(repo);
+               logger.info(repo.toString());
            }
        }
-
        assertEquals(allRepositories.isPresent(),true);
 
-
-
     }
+
+
 
 }
