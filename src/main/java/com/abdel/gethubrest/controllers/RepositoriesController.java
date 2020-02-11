@@ -31,6 +31,7 @@ public class RepositoriesController {
             return new ArrayList<>();
         }
     }
+
     @GetMapping("repositoriesbylang/{language}")
     public RepositoriesByLanguage RepositoriesByLanguage(@PathVariable String language){
         Optional<List<Repository>> allRepositories = gitHubService.getRepositoriesByLanguage(language);

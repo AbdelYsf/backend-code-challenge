@@ -2,6 +2,8 @@ package com.abdel.gethubrest.domain;
 
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class Repository {
 
@@ -12,9 +14,7 @@ public class Repository {
     private String owenerType;
     private String url;
     private String description;
-    private String language;
-    private String dateOfCreation;
-    private String dateOfLastModification;
+    private List<String> languages;
 
     public String getId() {
         return id;
@@ -72,43 +72,11 @@ public class Repository {
         this.description = description;
     }
 
-    public String getLanguage() {
-        return language;
+    public List<String> getLanguages() {
+        return languages;
     }
 
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getDateOfCreation() {
-        return dateOfCreation;
-    }
-
-    public void setDateOfCreation(String dateOfCreation) {
-        this.dateOfCreation = dateOfCreation;
-    }
-
-    public String getDateOfLastModification() {
-        return dateOfLastModification;
-    }
-
-    public void setDateOfLastModification(String dateOfLastModification) {
-        this.dateOfLastModification = dateOfLastModification;
-    }
-
-    @Override
-    public String toString() {
-        return "Repository{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", owener='" + owener + '\'' +
-                ", owenerType='" + owenerType + '\'' +
-                ", url='" + url + '\'' +
-                ", description='" + description + '\'' +
-                ", language='" + language + '\'' +
-                ", dateOfCreation='" + dateOfCreation + '\'' +
-                ", dateOfLastModification='" + dateOfLastModification + '\'' +
-                '}';
+    public void setLanguages(List<String> languages) {
+        this.languages = languages;
     }
 }
