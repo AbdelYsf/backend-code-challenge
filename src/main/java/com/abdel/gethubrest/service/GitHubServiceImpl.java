@@ -1,6 +1,7 @@
 package com.abdel.gethubrest.service;
 
 import com.abdel.gethubrest.domain.Repository;
+import com.abdel.gethubrest.utilities.GitHubEndpoints;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -24,13 +25,12 @@ import java.util.Optional;
 @Service
 public class GitHubServiceImpl implements GitHubService {
     Logger logger = LoggerFactory.getLogger(GitHubServiceImpl.class);
-    private static final String BASE_ENDPOINT_URI = "https://api.github.com/search/repositories?q=created";
-    private static final String TRENDING_ENDPOINT_URI = "https://api.github.com/search/repositories?q=created:%3E2020-01-07&sort=stars&order=desc";
+
 
     @Override
     public Optional<List<Repository>> getTrendingRepositories() {
         
-        return repositoriesHandler(TRENDING_ENDPOINT_URI);
+        return repositoriesHandler(GitHubEndpoints.TRENDING_ENDPOINT_URI);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class GitHubServiceImpl implements GitHubService {
     // returning a hashMap that contains the name of language as key and a list of its repos as values
     private HashMap<String,List<Repository>> reposByLanguage(){
 
-        Optional<List<Repository>> result = repositoriesHandler(BASE_ENDPOINT_URI);
+        Optional<List<Repository>> result = repositoriesHandler(GitHubEndpoints.BASE_ENDPOINT_URI);
         HashMap<String, List<Repository>> reposByLanguage = new HashMap<>();
 
         if (result.isPresent()){

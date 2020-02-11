@@ -31,12 +31,13 @@ public class RepositoriesController {
             return new ArrayList<>();
         }
     }
-    @GetMapping("repositories/{language}")
+    @GetMapping("repositoriesbylang/{language}")
     public RepositoriesByLanguage RepositoriesByLanguage(@PathVariable String language){
         Optional<List<Repository>> allRepositories = gitHubService.getRepositoriesByLanguage(language);
         RepositoriesByLanguage reposByLanguage = new RepositoriesByLanguage();
         if (allRepositories.isPresent()){
             logger.info("RepositoriesByLanguage is called ");
+            reposByLanguage.setLanguage(language);
             reposByLanguage.setRepositories(allRepositories.get());
             reposByLanguage.setCount(allRepositories.get().size());
             return reposByLanguage;

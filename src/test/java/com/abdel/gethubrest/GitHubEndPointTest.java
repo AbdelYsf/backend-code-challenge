@@ -2,7 +2,8 @@ package com.abdel.gethubrest;
 
 import com.abdel.gethubrest.domain.Repository;
 import com.abdel.gethubrest.service.GitHubService;
-import com.abdel.gethubrest.service.GitHubServiceImpl;
+
+import com.abdel.gethubrest.utilities.GitHubEndpoints;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -29,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class GitHubEndPointTest {
 
     private static final Logger logger = LoggerFactory.getLogger(GitHubEndPointTest.class);
-    private static final String GITHUB_ENDPOINT_URI = "https://api.github.com/search/repositories?q=created:%3E2020-01-07&sort=stars&order=desc";
 
     @Autowired
     GitHubService gitHubService;
@@ -38,7 +38,7 @@ public class GitHubEndPointTest {
 
         //arrange
         
-        HttpUriRequest httpUriRequest = new HttpGet(GITHUB_ENDPOINT_URI);
+        HttpUriRequest httpUriRequest = new HttpGet(GitHubEndpoints.TRENDING_ENDPOINT_URI);
 
         // act
         HttpResponse httpResponse =null;
@@ -63,7 +63,7 @@ public class GitHubEndPointTest {
     public void gitHubEndPointResponseType(){
 
         //arrange
-        HttpUriRequest httpUriRequest = new HttpGet(GITHUB_ENDPOINT_URI);
+        HttpUriRequest httpUriRequest = new HttpGet(GitHubEndpoints.TRENDING_ENDPOINT_URI);
 
         // act
         HttpResponse httpResponse =null;

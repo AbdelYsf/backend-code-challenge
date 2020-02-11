@@ -5,6 +5,16 @@ import java.util.List;
 public class RepositoriesByLanguage {
 
     private int count;
+    private String language;
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
     private List<Repository> repositories;
 
     public int getCount() {
